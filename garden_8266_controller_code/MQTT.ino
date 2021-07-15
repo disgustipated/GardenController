@@ -29,8 +29,9 @@ void reconnect() {
       MQTTError();
       Serial.print("failed, rc=");
       Serial.print(client.state());
+      blinkErrorCode(client.state());
       Serial.println(" try again in 1 seconds");
-      // Wait 5 seconds before retrying
+      // Wait 1 second before retrying
       Alarm.delay(1000);
     }
   }

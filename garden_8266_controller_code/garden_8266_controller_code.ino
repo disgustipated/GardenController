@@ -39,9 +39,9 @@ const char*   ntpServer   = "0.us.pool.ntp.org";
 const int8_t  ntpOffset   = -4; // hours
 const uint8_t ntpInterval = 5; // minutes
 struct {
-  uint8_t hours;
-  uint8_t minutes;
-  uint8_t seconds;
+  char hours;
+  char minutes;
+  char seconds;
   uint8_t nextNtp;
 } timeStruct;
 
@@ -71,7 +71,7 @@ void setup() {
   getTimeFromNtp();
   Serial.println((String)"Current Time: " + timeStruct.hours + ":" + timeStruct.minutes + ":" + timeStruct.seconds);
   //scheduler
-  setTime((int)timeStruct.hours,(int)timeStruct.minutes,(int)timeStruct.seconds,1,1,19);
+  setTime((char)timeStruct.hours,(char)timeStruct.minutes,(char)timeStruct.seconds,1,1,19);
   Alarm.alarmRepeat(7,0,0, activatePump);
   Alarm.alarmRepeat(12,30,0, activatePump);
   //Alarm.timerRepeat(15, activatePump);
