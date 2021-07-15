@@ -89,9 +89,7 @@ void loop() {
   }
   //checking if mqtt is connected
   checkMQTT();
-  if (!client.connected()) {
-    reconnect();
-  }
+
   client.loop();
   checkSensors();
   pumpRunning(); // wire a relay to pin 12 to the in1 on the relay, 5v to vcc and ground to ground
