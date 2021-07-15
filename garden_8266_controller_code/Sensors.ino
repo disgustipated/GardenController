@@ -26,8 +26,8 @@ void checkSensors(){
 
   // Check if any reads failed and exit early (to try again).
   if (isnan(h) || isnan(t) || isnan(f)) {
-    Serial.println(F("Failed to read from DHT sensor!"));
     SensorError();
+    Serial.println(F("Failed to read from DHT sensor!"));
     return;
   }
 
@@ -42,7 +42,7 @@ void checkSensors(){
     //serializeJsonPretty(mqttMsg, Serial);
     char buffer[512];
     size_t n = serializeJson(mqttMsg, buffer);
-    SensorSend();
+    dataSend();
     Serial.println(buffer);
     client.publish(topic, buffer, n);
     } else {

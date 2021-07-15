@@ -4,10 +4,10 @@ void MQTTError(){
   digitalWrite(RED_DATA_PIN, HIGH);
 }
 
-void SensorSend(){
-  digitalWrite(RED_DATA_PIN, LOW);
+void dataSend(){
+  digitalWrite(WIFI_INFO_LED_PIN, LOW);
   delay(150);
-  digitalWrite(RED_DATA_PIN, HIGH);
+  digitalWrite(WIFI_INFO_LED_PIN, HIGH);
 }
 
 void SensorError(){
