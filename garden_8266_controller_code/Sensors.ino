@@ -37,13 +37,13 @@ void checkSensors(){
         sMsg["temp"] = f;
         sMsg["humidity"] = h;
         sMsg["indx"] = hif;
-        publishMessage("home/garden",sMsg);
+        publishMessage("home/garden",sMsg,true);
       } else {
         sMsg["temp"] = 0;
         sMsg["humidity"] = 0;
         sMsg["indx"] = 0;
         SensorError();
-        publishMessage("home/garden",sMsg);
+        publishMessage("home/garden",sMsg,true);
       }
   }
 }
