@@ -9,3 +9,7 @@ void getTimeFromNtp() {
   timeStruct.nextNtp = ntpInterval;
   Serial.println(" OK.");
 }
+
+char* toCharArray(String str) {
+  return &str[0];
+}

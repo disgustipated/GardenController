@@ -37,7 +37,6 @@ void checkSensors(){
         sMsg["temp"] = f;
         sMsg["humidity"] = h;
         sMsg["indx"] = hif;
-        dataSend();
         publishMessage("home/garden",sMsg);
       } else {
         sMsg["temp"] = 0;
@@ -51,7 +50,7 @@ void checkSensors(){
 
 void checkWaterLevels(){
   currMillis = millis();
-    StaticJsonDocument<512> mqttDoc;
+  StaticJsonDocument<512> mqttDoc;
   JsonObject wlMsg = mqttDoc.to<JsonObject>();
   if (currMillis - wprevMillisSensors >= WATER_CHECK_SENSORS_INTERVAL){
     wprevMillisSensors = currMillis;
@@ -72,7 +71,6 @@ void checkWaterLevels(){
     distanceIn = distance*0.3937; //in inches
 
     wlMsg["waterLevel"] = distanceIn;
-    dataSend();
     publishMessage("home/garden/MainBarrel", wlMsg);
   }
 }
