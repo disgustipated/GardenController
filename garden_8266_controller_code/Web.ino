@@ -1,6 +1,6 @@
 //Webpage setup and config
 void setupWeb(){
-//  server.on("/device/levelstatus", HTTP_GET, getWaterLevel());
+  server.on("/device/levelstatus", HTTP_GET, checkWaterLevels);
   server.on("/device/activatePump", HTTP_POST, activatePump);
   server.on("/version", HTTP_GET, getVersion);
   server.on("/", handleRoot);
@@ -10,7 +10,7 @@ void setupWeb(){
   });
   server.onNotFound(handleNotFound);
   server.begin();
-  }
+}
 
 //web api calls
 //main web service host

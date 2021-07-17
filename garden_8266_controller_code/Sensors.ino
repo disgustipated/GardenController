@@ -71,6 +71,6 @@ void checkWaterLevels(){
     distanceIn = distance*0.3937; //in inches
 
     wlMsg["waterLevel"] = distanceIn;
-    publishMessage("home/garden/MainBarrel", wlMsg);
+    publishMessage("home/garden/MainBarrel", wlMsg, true);
   }
 }
