@@ -36,3 +36,15 @@ void reconnect() {
     }
   }
 }
+
+char* toCharArray(String str) {
+  return &str[0];
+}
+
+void publishMessage(String mqtttopic, JsonObject message){
+  checkMQTT();
+  char buffer[512];
+  size_t n = serializeJson(message, buffer);
+  Serial.println(buffer);
+  client.publish(toCharArray(mqtttopic), toCharArray(buffer), (size_t)n);
+}

@@ -11,6 +11,8 @@
 #include <NTPClient.h>   //https://github.com/arduino-libraries/NTPClient
 #include <WiFiUdp.h>
 
+#define trigPin 15
+#define echoPin 13
 #define DHTPIN 4     // Digital pin connected to the DHT sensor
 #define DHTTYPE DHT22   // DHT 22  (AM2302), AM2321
 #define mqtt_server "6.13.0.120"
@@ -30,11 +32,17 @@ const long ACTIVATE_DURATION = 300000;
 const long CHECK_WIFI_INTERVAL = 30000;
 const long CHECK_MQTT_INTERVAL = 30000;
 const long CHECK_SENSORS_INTERVAL = 5000;
+const long WATER_CHECK_SENSORS_INTERVAL = 5000;
+long duration;
+int distance;
+int distanceIn;
 unsigned long deviceActivateStart;
 unsigned long prevMillisSensors = 0;
+unsigned long wprevMillisSensors = 0;
 unsigned long prevMillisWiFi = 0;
 unsigned long prevMillisMQTT = 0;
 unsigned long currMillis = millis();
+
 const char*   ntpServer   = "0.us.pool.ntp.org";
 const int8_t  ntpOffset   = -4; // hours
 const uint8_t ntpInterval = 5; // minutes
@@ -51,6 +59,7 @@ WiFiClient espClient;
 PubSubClient client(espClient);
 WiFiManager wifiManager;
 DHT dht(DHTPIN, DHTTYPE);
+
 WiFiUDP time_udp;
 NTPClient timeClient(time_udp, ntpServer, ntpOffset * 3600);
 
@@ -63,10 +72,13 @@ void setup() {
   pinMode(PUMP_ACTIVATE_PIN,OUTPUT);
   digitalWrite(PUMP_ACTIVATE_PIN,HIGH);
   pinMode(SENSOR_INFO_LED_PIN,OUTPUT);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
   //wifiManager.setSTAStaticIPConfig(IPAddress(6,13,0,218), IPAddress(6,13,0,1), IPAddress(255,255,255,0)); //Remove this for DHCP
   wifiManager.autoConnect("ESPSetup", "wifiSetup1");
   client.setServer(mqtt_server, 1883);
   dht.begin();
+
   setupWeb();
   getTimeFromNtp();
   Serial.println((String)"Current Time: " + timeStruct.hours + ":" + timeStruct.minutes + ":" + timeStruct.seconds);
@@ -87,11 +99,10 @@ void loop() {
     wifiManager.startConfigPortal("OnDemandAP");
     Serial.println("Autoconnect portal running");
   }
-  //checking if mqtt is connected
-  checkMQTT();
-
+  
   client.loop();
   checkSensors();
+  checkWaterLevels();
   pumpRunning(); // wire a relay to pin 12 to the in1 on the relay, 5v to vcc and ground to ground
   //need to add logic to handle multiple different devices in the server in the wifi.connect where the server.on are declared. need to add
   //sprinkler - this will be a relay that triggers the water relay thing connected to the inlet from the house water when the humidity is low - need to run some sprinkler things from the roof runners
