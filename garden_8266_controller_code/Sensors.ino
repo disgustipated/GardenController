@@ -1,3 +1,4 @@
+//This needs reworked to request from the drones
 void checkSensors(){
   currMillis = millis();
   StaticJsonDocument<512> mqttDoc;
@@ -35,11 +36,11 @@ void checkSensors(){
 
 void checkWaterLevels(){
   currMillis = millis();
-  StaticJsonDocument<512> mqttDoc;
-  JsonObject wlMsg = mqttDoc.to<JsonObject>();
   if (currMillis - wprevMillisSensors >= WATER_CHECK_SENSORS_INTERVAL){
+    StaticJsonDocument<512> mqttDoc;
+    JsonObject wlMsg = mqttDoc.to<JsonObject>();
     wprevMillisSensors = currMillis;
-    
+    // send get request to drones?
     publishMessage("home/garden/MainBarrel", wlMsg, true);
   }
 }
