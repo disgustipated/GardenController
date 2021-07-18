@@ -26,10 +26,11 @@ void reconnect() {
     if (client.connect(DEVICENAME, mqtt_user, mqtt_password)) {
       Serial.println("connected");
     } else {
-      MQTTError();
+      MQTTError(RED_DATA_PIN);
+      int statecode = client.state();
       Serial.print("failed, rc=");
-      Serial.print(client.state());
-      blinkErrorCode(client.state());
+      Serial.print(statecode);
+      blinkErrorCode(RED_DATA_PIN,statecode);
       Serial.println(" try again in 1 seconds");
       // Wait 1 second before retrying
       Alarm.delay(1000);
@@ -43,11 +44,11 @@ void publishMessage(String mqtttopic, JsonObject message, bool webResponse=false
   size_t n = serializeJson(message, buffer);
   Serial.println(buffer);
   if(client.publish(toCharArray(mqtttopic), toCharArray(buffer), (size_t)n)){
-    dataSend();
+    dataSend(WIFI_INFO_LED_PIN);
     if(webResponse){
       server.send(200,"text/plain",buffer);
     }
   } else {
-    MQTTError();
+    MQTTError(RED_DATA_PIN);
   }
 }

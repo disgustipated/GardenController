@@ -10,6 +10,7 @@
 #include <TimeAlarms.h>  //https://github.com/PaulStoffregen/TimeAlarms
 #include <NTPClient.h>   //https://github.com/arduino-libraries/NTPClient
 #include <WiFiUdp.h>
+#include <LED.h>
 
 #define DHTPIN 4     // Digital pin connected to the DHT sensor
 #define DHTTYPE DHT22   // DHT 22  (AM2302), AM2321
