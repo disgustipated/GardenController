@@ -23,9 +23,9 @@ void handleRoot() {
   int sec = millis() / 1000;
   int min = sec / 60;
   int hr = min / 60;
-  float sensorDataTemp = dht.readTemperature(true);
-  float sensorDataHumd = dht.readHumidity();
-  float sensorDataIndx = dht.computeHeatIndex(sensorDataTemp,sensorDataHumd);
+  float sensorDataTemp = convertCtoF(bme.readTemperature());
+  float sensorDataHumd = bme.readHumidity();
+  float sensorDataIndx = computeHeatIndex(sensorDataTemp,sensorDataHumd,true);
   //conversion specifiers https://www.programiz.com/cpp-programming/library-function/cstdio/sprintf
   snprintf(temp, 1500,
            "<html>\
@@ -48,9 +48,10 @@ void handleRoot() {
               <h1>Device: %s Version:%s ESP8266</h1>\
               <p>Current Time: %s</p>\
               <p>Uptime: %02d:%02d:%02d</p>\
-              <p>Temp: %f</p>\
-              <p>Humidity: %f</p>\
-              <p>Heat Index: %f</p>\
+              <p>Temp: %f °F</p>\
+              <p>Humidity: %f %%</p>\
+              <p>Heat Index: %f °F</p>\
+              <p>Barometric Pressure: %f hPa</p>\
               <button onclick=\"activatePump()\">Run Pump</button>\
             </body>\
            </html>",

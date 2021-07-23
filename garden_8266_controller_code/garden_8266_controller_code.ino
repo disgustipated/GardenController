@@ -4,35 +4,39 @@
 #include <ESP8266mDNS.h>
 #include <Wire.h>
 #include <PubSubClient.h> //https://github.com/knolleary/pubsubclient
-#include "DHT.h"
 #include <WiFiManager.h> //https://github.com/tzapu/WiFiManager
 #include <Time.h>
 #include <TimeAlarms.h>  //https://github.com/PaulStoffregen/TimeAlarms
 #include <NTPClient.h>   //https://github.com/arduino-libraries/NTPClient
 #include <WiFiUdp.h>
+#include <SPI.h>
+#include <Adafruit_Sensor.h>
+#include <Adafruit_BME280.h>
 
-#define trigPin 15
+//pins
+const int RED_DATA_PIN = 0;
+const int WIFI_INFO_LED_PIN = 2;
+const int SENSOR_INFO_LED_PIN = 5;
+const int PUMP_ACTIVATE_PIN = 12;
 #define echoPin 13
-#define DHTPIN 4     // Digital pin connected to the DHT sensor
-#define DHTTYPE DHT22   // DHT 22  (AM2302), AM2321
+const int WIFI_RESET_PIN = 14;
+#define trigPin 15
+
+//vars
 #define mqtt_server "6.13.0.120"
 #define mqtt_user "garden"
 #define mqtt_password "garden"
 #define topic "home/garden"
-
 const int  statusPagePort = 8266;
-const char* SOFTWARE_VERSION = "3.0 Garden Controller";
-const char* DEVICENAME = "GardenController"; 
-const int SENSOR_INFO_LED_PIN = 5;
-const int RED_DATA_PIN = 0;
-const int WIFI_INFO_LED_PIN = 2;
-const int WIFI_RESET_PIN = 14;
-const int PUMP_ACTIVATE_PIN = 12;
+const char* SOFTWARE_VERSION = "3.1 Garden Controller";
+const char* DEVICENAME = "GardenControllerTest"; 
 const long ACTIVATE_DURATION = 300000;
 const long CHECK_WIFI_INTERVAL = 30000;
 const long CHECK_MQTT_INTERVAL = 30000;
 const long CHECK_SENSORS_INTERVAL = 5000;
 const long WATER_CHECK_SENSORS_INTERVAL = 5000;
+#define SEALEVELPRESSURE_HPA (1013.25)
+
 long duration;
 int distance;
 int distanceIn;
@@ -58,12 +62,13 @@ ESP8266WebServer server(statusPagePort); //this cant be running on port 80 becau
 WiFiClient espClient;
 PubSubClient client(espClient);
 WiFiManager wifiManager;
-DHT dht(DHTPIN, DHTTYPE);
+Adafruit_BME280 bme; // I2C
 
 WiFiUDP time_udp;
 NTPClient timeClient(time_udp, ntpServer, ntpOffset * 3600);
 
 void setup() {
+  unsigned bmestatus;
   Serial.begin(9600);
   pinMode(WIFI_RESET_PIN,INPUT_PULLUP);
   pinMode(WIFI_INFO_LED_PIN,OUTPUT);
@@ -74,10 +79,19 @@ void setup() {
   pinMode(SENSOR_INFO_LED_PIN,OUTPUT);
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
+  bmestatus = bme.begin();
+  if (!bmestatus) {
+    Serial.println("Could not find a valid BME280 sensor, check wiring, address, sensor ID!");
+    Serial.print("SensorID was: 0x"); Serial.println(bme.sensorID(),16);
+    Serial.print("        ID of 0xFF probably means a bad address, a BMP 180 or BMP 085\n");
+    Serial.print("   ID of 0x56-0x58 represents a BMP 280,\n");
+    Serial.print("        ID of 0x60 represents a BME 280.\n");
+    Serial.print("        ID of 0x61 represents a BME 680.\n");
+    while (1) delay(10);
+  }  
   //wifiManager.setSTAStaticIPConfig(IPAddress(6,13,0,218), IPAddress(6,13,0,1), IPAddress(255,255,255,0)); //Remove this for DHCP
   wifiManager.autoConnect("ESPSetup", "wifiSetup1");
   client.setServer(mqtt_server, 1883);
-  dht.begin();
 
   setupWeb();
   getTimeFromNtp();
