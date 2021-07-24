@@ -27,7 +27,7 @@ const int WIFI_RESET_PIN = 14;
 #define mqtt_server "6.13.0.120"
 #define mqtt_user "garden"
 #define mqtt_password "garden"
-#define topic "home/garden"
+
 const int  statusPagePort = 8266;
 const char* SOFTWARE_VERSION = "3.1 Garden Controller";
 const char* DEVICENAME = "GardenControllerTest"; 
@@ -81,15 +81,15 @@ void setup() {
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
   bmestatus = bme.begin();
-  //if (!bmestatus) {
-  //  Serial.println("Could not find a valid BME280 sensor, check wiring, address, sensor ID!");
-  //  Serial.print("SensorID was: 0x"); Serial.println(bme.sensorID(),16);
-  //  Serial.print("        ID of 0xFF probably means a bad address, a BMP 180 or BMP 085\n");
-  //  Serial.print("   ID of 0x56-0x58 represents a BMP 280,\n");
-  //  Serial.print("        ID of 0x60 represents a BME 280.\n");
-  //  Serial.print("        ID of 0x61 represents a BME 680.\n");
-  //  while (1) delay(10);
-  //}  
+  if (!bmestatus) {
+    Serial.println("Could not find a valid BME280 sensor, check wiring, address, sensor ID!");
+    Serial.print("SensorID was: 0x"); Serial.println(bme.sensorID(),16);
+    Serial.print("        ID of 0xFF probably means a bad address, a BMP 180 or BMP 085\n");
+    Serial.print("   ID of 0x56-0x58 represents a BMP 280,\n");
+    Serial.print("        ID of 0x60 represents a BME 280.\n");
+    Serial.print("        ID of 0x61 represents a BME 680.\n");
+    while (1) delay(10);
+  }  
   //wifiManager.setSTAStaticIPConfig(IPAddress(6,13,0,218), IPAddress(6,13,0,1), IPAddress(255,255,255,0)); //Remove this for DHCP
   wifiManager.setHostname(DEVICENAME);
   if(!wifiManager.autoConnect("ESPSetup", "wifiSetup1")){
