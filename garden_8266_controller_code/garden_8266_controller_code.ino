@@ -80,17 +80,20 @@ void setup() {
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
   bmestatus = bme.begin();
-  if (!bmestatus) {
-    Serial.println("Could not find a valid BME280 sensor, check wiring, address, sensor ID!");
-    Serial.print("SensorID was: 0x"); Serial.println(bme.sensorID(),16);
-    Serial.print("        ID of 0xFF probably means a bad address, a BMP 180 or BMP 085\n");
-    Serial.print("   ID of 0x56-0x58 represents a BMP 280,\n");
-    Serial.print("        ID of 0x60 represents a BME 280.\n");
-    Serial.print("        ID of 0x61 represents a BME 680.\n");
-    while (1) delay(10);
-  }  
+  //if (!bmestatus) {
+  //  Serial.println("Could not find a valid BME280 sensor, check wiring, address, sensor ID!");
+  //  Serial.print("SensorID was: 0x"); Serial.println(bme.sensorID(),16);
+  //  Serial.print("        ID of 0xFF probably means a bad address, a BMP 180 or BMP 085\n");
+  //  Serial.print("   ID of 0x56-0x58 represents a BMP 280,\n");
+  //  Serial.print("        ID of 0x60 represents a BME 280.\n");
+  //  Serial.print("        ID of 0x61 represents a BME 680.\n");
+  //  while (1) delay(10);
+  //}  
   //wifiManager.setSTAStaticIPConfig(IPAddress(6,13,0,218), IPAddress(6,13,0,1), IPAddress(255,255,255,0)); //Remove this for DHCP
-  wifiManager.autoConnect("ESPSetup", "wifiSetup1");
+  wifiManager.setHostname(DEVICENAME);
+  if(!wifiManager.autoConnect("ESPSetup", "wifiSetup1")){
+    wifiManager.autoConnect("ESPSetup", "wifiSetup1");
+  }
   client.setServer(mqtt_server, 1883);
 
   setupWeb();
