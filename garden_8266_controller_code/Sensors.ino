@@ -25,7 +25,7 @@ void checkSensors(){
     
     // Check if any reads failed and exit early (to try again).
     if (isnan(h) || isnan(t) || isnan(p)) {
-      SensorError();
+      SensorError(RED_DATA_PIN);
       Serial.println(F("Failed to read from sensor!"));
       return;
     }
@@ -43,7 +43,7 @@ void checkSensors(){
         sMsg["humidity"] = 0;
         sMsg["indx"] = 0;
         sMsg["pressure"] = 0;
-        SensorError();
+        SensorError(RED_DATA_PIN);
         publishMessage("home/garden",sMsg);
       }
   }
