@@ -37,14 +37,14 @@ void checkSensors(){
         sMsg["humidity"] = h;
         sMsg["indx"] = hif;
         sMsg["pressure"] = p;
-        publishMessage("test/garden",sMsg);
+        publishMessage("home/garden",sMsg);
       } else {
         sMsg["temp"] = 0;
         sMsg["humidity"] = 0;
         sMsg["indx"] = 0;
         sMsg["pressure"] = 0;
         SensorError();
-        publishMessage("test/garden",sMsg);
+        publishMessage("home/garden",sMsg);
       }
   }
 }
@@ -72,6 +72,6 @@ void checkWaterLevels(){
     distanceIn = distance*0.3937; //in inches
 
     wlMsg["waterLevel"] = distanceIn;
-    publishMessage("test/garden/MainBarrel", wlMsg);
+    publishMessage("home/garden/MainBarrel", wlMsg);
   }
 }
