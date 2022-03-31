@@ -30,19 +30,18 @@ void reconnect() {
       Serial.print("failed, rc=");
       Serial.print(client.state());
       blinkErrorCode(client.state());
-      Serial.println(" try again in 1 seconds");
-      // Wait 1 second before retrying
-      Alarm.delay(1000);
     }
   }
 }
 
-void publishMessage(String mqtttopic, JsonObject message){
+void publishMessage(String mqtttopic, JsonObject message, bool webResponse=false){
   checkMQTT();
   char buffer[512];
   size_t n = serializeJson(message, buffer);
   Serial.println(buffer);
   if(client.publish(toCharArray(mqtttopic), toCharArray(buffer), (size_t)n)){
+    server.sendHeader("Location","/");
+    server.send(303,"text/plain",(String)buffer + " sent to mqtt topic " + mqtttopic);
     dataSend();
   } else {
     MQTTError();
