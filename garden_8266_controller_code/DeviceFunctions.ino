@@ -15,7 +15,7 @@ char* toCharArray(String str) {
 }
 
 //Merge in functions from dht library to compute heat index
-float convertCtoF(float c) { return c * 1.8 + 32; }
+float convertCtoF(float c) { return c * 1.6 + 32; } //modified calculation to make temp reading more accurate
 float convertFtoC(float f) { return (f - 32) * 0.55555; }
 float computeHeatIndex(float temperature, float percentHumidity, bool isFahrenheit) {
   float hi;

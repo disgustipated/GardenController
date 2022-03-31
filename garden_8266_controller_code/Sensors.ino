@@ -17,7 +17,7 @@ void checkSensors(){
   currMillis = millis();
   StaticJsonDocument<512> mqttDoc;
   JsonObject sMsg = mqttDoc.to<JsonObject>();
-  if (currMillis - prevMillisSensors >= CHECK_SENSORS_INTERVAL){
+  if (currMillis - prevMillisSensors >= CHECK_SENSORS_INTERVAL || currMillis < 3000){
     prevMillisSensors = currMillis;
     float h = bme.readHumidity();
     float t = convertCtoF(bme.readTemperature());
@@ -53,7 +53,7 @@ void checkWaterLevels(){
   currMillis = millis();
   StaticJsonDocument<512> mqttDoc;
   JsonObject wlMsg = mqttDoc.to<JsonObject>();
-  if (currMillis - wprevMillisSensors >= WATER_CHECK_SENSORS_INTERVAL){
+  if (currMillis - wprevMillisSensors >= WATER_CHECK_SENSORS_INTERVAL || currMillis < 3000){
     wprevMillisSensors = currMillis;
     // Clear the trigPin by setting it LOW:
     digitalWrite(trigPin, LOW);
@@ -65,12 +65,12 @@ void checkWaterLevels(){
     digitalWrite(trigPin, LOW);
     
     // Read the echoPin. pulseIn() returns the duration (length of the pulse) in microseconds:
-    duration = pulseIn(echoPin, HIGH);
+    int duration = pulseIn(echoPin, HIGH);
     
     // Calculate the distance:
-    distance = duration*0.034/2; //in cm
+    int distance = duration*0.034/2; //in cm
     distanceIn = distance*0.3937; //in inches
-
+    
     wlMsg["waterLevel"] = distanceIn;
     publishMessage("home/garden/MainBarrel", wlMsg);
   }

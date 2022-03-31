@@ -6,8 +6,6 @@ void MQTTError(){
 
 void blinkErrorCode(int errorNumber){
   int iblink = -1;
-  Serial.println(errorNumber);
-  Serial.println(client.state());
   while(iblink < errorNumber){
     digitalWrite(RED_DATA_PIN, LOW);
     delay(150);

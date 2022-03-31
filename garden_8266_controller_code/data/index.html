@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>%DEVICENAME%</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+  <h1>%DEVICENAME%</h1>
+  <p>IP: %CURRENTIP%</p>
+  <p>Current Time: %CURRENTTIME%</p>
+  <p>Uptime: %UPTIME%</p>
+  <p>
+    <h2>Pump Control </h2>
+    <!-- todo: fix this so it refreshes on an xhr redirect 
+    Current State: <strong> %RELAYSTATE%</strong> <br /> -->
+    <button class="button" onclick="activatePump()">Run Pump</button>
+  </p>
+</body>
+<script>
+  function activatePump(){
+    var xhr = new XMLHttpRequest();
+    var url = "http://%DEVICENAME%:%DEVICEPORT%/activatePump";
+    xhr.open("POST",url, true);
+    xhr.send();
+  /*
+  function lightsON(){
+      var xhr = new XMLHttpRequest();
+      var url = "http://%DEVICENAME%:%DEVICEPORT%/lightsOn";
+      xhr.open("POST",url, true);
+      xhr.send();
+    }
+  function lightsOFF(){
+      var xhr = new XMLHttpRequest();
+      var url = "http://%DEVICENAME%:%DEVICEPORT%/lightsOff";
+      xhr.open("POST",url, true); 
+      xhr.send();
+    } 
+    */
+</script>
+</html>

@@ -5,13 +5,14 @@
 #include <Wire.h>
 #include <PubSubClient.h> //https://github.com/knolleary/pubsubclient
 #include <WiFiManager.h> //https://github.com/tzapu/WiFiManager
+#include <WiFiUdp.h>
 #include <Time.h>
 #include <TimeAlarms.h>  //https://github.com/PaulStoffregen/TimeAlarms
 #include <NTPClient.h>   //https://github.com/arduino-libraries/NTPClient
-#include <WiFiUdp.h>
 #include <SPI.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BME280.h>
+using namespace std; // needed for vector in web
 
 //pins
 const int RED_DATA_PIN = 0;
@@ -29,12 +30,12 @@ const int WIFI_RESET_PIN = 14;
 
 const int  statusPagePort = 8266;
 const char* SOFTWARE_VERSION = "3.1 Garden Controller";
-const char* DEVICENAME = "GardenControllerTest"; 
+const char* DEVICENAME = "GardenController"; 
 const long ACTIVATE_DURATION = 300000;
-const long CHECK_WIFI_INTERVAL = 30000;
-const long CHECK_MQTT_INTERVAL = 30000;
-const long CHECK_SENSORS_INTERVAL = 5000;
-const long WATER_CHECK_SENSORS_INTERVAL = 5000;
+const long CHECK_WIFI_INTERVAL = 120000;
+const long CHECK_MQTT_INTERVAL = 120000;
+const long CHECK_SENSORS_INTERVAL = 60000;
+const long WATER_CHECK_SENSORS_INTERVAL = 120000;
 #define SEALEVELPRESSURE_HPA (1013.25)
 
 long duration;
@@ -51,9 +52,9 @@ const char*   ntpServer   = "0.us.pool.ntp.org";
 const int8_t  ntpOffset   = -4; // hours
 const uint8_t ntpInterval = 5; // minutes
 struct {
-  char hours;
-  char minutes;
-  char seconds;
+  uint8_t hours;
+  uint8_t minutes;
+  uint8_t seconds;
   uint8_t nextNtp;
 } timeStruct;
 
@@ -79,7 +80,8 @@ void setup() {
   pinMode(SENSOR_INFO_LED_PIN,OUTPUT);
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
-  bmestatus = bme.begin();
+  bmestatus = bme.begin(0x76); //changed to bme280 that was running on different than default
+  Serial.println(bmestatus);
   if (!bmestatus) {
     Serial.println("Could not find a valid BME280 sensor, check wiring, address, sensor ID!");
     Serial.print("SensorID was: 0x"); Serial.println(bme.sensorID(),16);
@@ -95,15 +97,17 @@ void setup() {
     wifiManager.autoConnect("ESPSetup", "wifiSetup1");
   }
   client.setServer(mqtt_server, 1883);
-
+  
   setupWeb();
   getTimeFromNtp();
-  Serial.println((String)"Current Time: " + timeStruct.hours + ":" + timeStruct.minutes + ":" + timeStruct.seconds);
+  Serial.println((String)"Current Time: " + (int)timeStruct.hours + ":" + (int)timeStruct.minutes + ":" + (int)timeStruct.seconds);
   //scheduler
-  setTime((char)timeStruct.hours,(char)timeStruct.minutes,(char)timeStruct.seconds,1,1,19);
+  setTime((int)timeStruct.hours,(int)timeStruct.minutes,(char)timeStruct.seconds,1,1,19);
   Alarm.alarmRepeat(7,0,0, activatePump);
   Alarm.alarmRepeat(12,30,0, activatePump);
   //Alarm.timerRepeat(15, activatePump);
+  //connect mqtt
+  reconnect();
 }
 
 //main loop
