@@ -34,6 +34,7 @@ void handleRoot() {
               <title>%s %s ESP8266</title>\
               <style>\
                 body { background-color: #cccccc; font-family: Arial, Helvetica, Sans-Serif; Color: #000088; }\
+                button {  background-color: #4CAF50; border: none;color: white; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer; transition-duration: 0.4s; box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19); border-radius: 8px;}\
               </style>\
               <script>\
                 function activatePump(){\
