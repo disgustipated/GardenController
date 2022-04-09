@@ -8,12 +8,11 @@ void blinkErrorCode(int errorNumber){
   int iblink = -1;
   while(iblink < errorNumber){
     digitalWrite(RED_DATA_PIN, LOW);
-    delay(150);
+    delay(100);
     digitalWrite(RED_DATA_PIN, HIGH);
-    delay(1000);
+    delay(300);
     iblink++;
   }
-  delay(2000);
 }
 
 void dataSend(){

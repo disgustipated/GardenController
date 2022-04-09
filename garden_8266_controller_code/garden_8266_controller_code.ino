@@ -22,11 +22,13 @@ const int PUMP_ACTIVATE_PIN = 12;
 #define echoPin 13
 const int WIFI_RESET_PIN = 14;
 #define trigPin 15
+const int LIGHTS_RELAY = 16;
 
 //vars
 #define mqtt_server "6.13.0.120"
 #define mqtt_user "garden"
 #define mqtt_password "garden"
+#define topic "home/garden"
 
 const int  statusPagePort = 8266;
 const char* SOFTWARE_VERSION = "3.1 Garden Controller";

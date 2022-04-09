@@ -3,6 +3,9 @@ void setupWeb(){
   server.on("/tempstatus", HTTP_GET, checkSensors);
   server.on("/levelstatus", HTTP_GET, checkWaterLevels);
   server.on("/activatePump", HTTP_POST, activatePump);
+  server.on("/lightsOn", HTTP_POST, lightRelayOn);
+  server.on("/lightsOff", HTTP_POST, lightRelayOff);
+  server.on("/relayState", HTTP_POST, relayState);
   // need to figure this out so i can handle partial file loads server.on("/",HTTP_GET,handleFileRead);
   server.onNotFound([]() {                              // If the client requests any URI
     if (!handleFileRead(server.uri()))                  // send it if it exists

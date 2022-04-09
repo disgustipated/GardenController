@@ -19,19 +19,16 @@ void checkMQTT() {
 }
 
 void reconnect() {
-  int reconnectCount = 0;
-  // Loop until we're reconnected
-  while (!client.connected()) {
-    Serial.println("Attempting MQTT connection...");
-    if (client.connect(DEVICENAME, mqtt_user, mqtt_password)) {
-      Serial.println("connected");
-    } else {
-      MQTTError();
-      Serial.print("failed, rc=");
-      Serial.print(client.state());
-      blinkErrorCode(client.state());
-    }
+  Serial.println("Attempting MQTT connection...");
+  if (client.connect(DEVICENAME, mqtt_user, mqtt_password)) {
+    Serial.println("connected");
+  } else {
+    MQTTError();
+    Serial.print("failed, rc=");
+    Serial.print(client.state());
+    blinkErrorCode(client.state());
   }
+
 }
 
 void publishMessage(String mqtttopic, JsonObject message, bool webResponse=false){
@@ -40,9 +37,11 @@ void publishMessage(String mqtttopic, JsonObject message, bool webResponse=false
   size_t n = serializeJson(message, buffer);
   Serial.println(buffer);
   if(client.publish(toCharArray(mqtttopic), toCharArray(buffer), (size_t)n)){
-    server.sendHeader("Location","/");
-    server.send(303,"text/plain",(String)buffer + " sent to mqtt topic " + mqtttopic);
     dataSend();
+    if(webResponse){
+      server.sendHeader("Location","/");
+      server.send(303,"text/plain",(String)buffer + " sent to mqtt topic " + mqtttopic);
+    }
   } else {
     MQTTError();
   }
